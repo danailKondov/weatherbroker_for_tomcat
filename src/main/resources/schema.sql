@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS weather_condition (
 CREATE TABLE IF NOT EXISTS weather_forecast (
   id INTEGER PRIMARY KEY AUTO_INCREMENT,
   version INTEGER,
-  date_forecast DATETIME,
+  date_forecast TIMESTAMP,
   city VARCHAR(255),
   temp_type VARCHAR(255)
 );

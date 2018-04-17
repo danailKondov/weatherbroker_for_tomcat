@@ -5,12 +5,11 @@ import com.bellintegrator.weatherbrokertomcat.service.CityWeatherService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
-//@RequestMapping(value = "/weather")
+@RestController
 public class CityControllerImpl implements CityController {
 
     private final Logger log = LoggerFactory.getLogger(CityControllerImpl.class);
@@ -33,10 +32,5 @@ public class CityControllerImpl implements CityController {
     public void getWeatherForCity(@RequestParam("cityName") String cityName, @RequestParam("degreeParam") String degreeParam, @RequestParam("typeInfo") String typeInfo) {
         log.info("New request for weather with params: " + cityName + "; " + degreeParam + "; " + typeInfo);
         service.getWeatherForCity(cityName, degreeParam, typeInfo);
-    }
-
-    @GetMapping(value = "/")
-    public String getHomePage() {
-        return "index";
     }
 }
