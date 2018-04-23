@@ -28,7 +28,7 @@ import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
 @SpringBootApplication
-@EnableJms
+@EnableJms // почему здесь не происходит удвоения месседжей? все аннотации ниже кроме последней лишние
 @EnableWebMvc
 @Configuration
 @ComponentScan("com.bellintegrator.weatherbrokertomcat")

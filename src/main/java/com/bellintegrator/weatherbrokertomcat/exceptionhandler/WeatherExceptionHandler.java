@@ -17,7 +17,7 @@ public class WeatherExceptionHandler {
         log.error(ex.getMessage(), ex.getCause());
         ModelAndView view = new ModelAndView();
         view.addObject("exception", ex);
-        view.setViewName("/index.jsp");
+        view.setViewName("/index.html");
         return view;
     }
 

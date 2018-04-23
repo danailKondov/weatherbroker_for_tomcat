@@ -1,11 +1,54 @@
 
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Enter city</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            height: 100%;
+            background-image: url("background.jpg"); /*не видит*/
+            background-repeat: no-repeat;
+            background-size: contain;
+        }
+        .box {
+            background-color: white;
+            border: 5px solid;
+            border-radius: 10px;
+            margin-left: 100px;
+            margin-right: 500px;
+            margin-top: 100px;
+        }
+    </style>
 </head>
 <body>
-<h1>Enter city for weather info</h1><br/>
-<h3>Be careful!</h3>
-<b> Enjoy </b>
+<div class="box">
+    <h1 style="margin-left: 120px">Enter city for weather info</h1><br/>
+    <form style="width: 600px; margin-left: 120px" action="/cityname">
+        <fieldset>
+            <legend>Название города</legend>
+            <input type="text" name="cityName" required/>
+        </fieldset>
+        <br/>
+        <fieldset> <legend>Единицы измерения температуры</legend>
+            <label><input type="radio" name="degreeParam" value="celsius" checked>градусы Цельсия</label>
+            <label><input type="radio" name="degreeParam" value="fahrenheit">градусы Фаренгейта</label>
+        </fieldset>
+        <br/>
+        <fieldset> <legend>Прогноз или текущее состояние?</legend>
+            <label><input type="radio" name="typeInfo" value="current" checked>текущее состояние</label>
+            <label><input type="radio" name="typeInfo" value="forecast">прогноз</label>
+        </fieldset>
+        <br/>
+        <input class="btn btn-default" type="submit" value="Submit">
+    </form>
+</div>
+<br/>
+<div class="box" th:if="${exception} != null">
+    <p style="color: red; margin-left: 120px; font-size: large" th:text="${exception.message}"/>
+</div>
+
 </body>
 </html>
