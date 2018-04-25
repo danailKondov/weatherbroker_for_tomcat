@@ -1,5 +1,7 @@
 package com.bellintegrator.weatherbrokertomcat.service.impl;
 
+import com.bellintegrator.weatherbrokertomcat.dao.WeatherConditionRepository;
+import com.bellintegrator.weatherbrokertomcat.dao.WeatherForecastRepository;
 import com.bellintegrator.weatherbrokertomcat.exceptionhandler.exceptions.WeatherException;
 import com.bellintegrator.weatherbrokertomcat.jms.WeatherJmsProducer;
 import com.bellintegrator.weatherbrokertomcat.model.ForecastForDay;
@@ -15,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
@@ -34,10 +37,48 @@ public class CityWeatherServiceImpl implements CityWeatherService {
     private WeatherJmsProducer jmsProducer;
     private RestTemplate restTemplate;
 
+    private WeatherConditionRepository actualConditionRepository;
+    private WeatherForecastRepository forecastRepository;
+
     @Autowired
-    public CityWeatherServiceImpl(WeatherJmsProducer jmsProducer, RestTemplate restTemplate) {
+    public CityWeatherServiceImpl(WeatherJmsProducer jmsProducer,
+                                  RestTemplate restTemplate,
+                                  WeatherConditionRepository actualConditionRepository,
+                                  WeatherForecastRepository forecastRepository) {
         this.jmsProducer = jmsProducer;
         this.restTemplate = restTemplate;
+        this.actualConditionRepository = actualConditionRepository;
+        this.forecastRepository = forecastRepository;
+    }
+
+    /**
+     * Метод получает список актуальной информации по погоде в городе в разное время.
+     *
+     * @param cityName имя города
+     * @return список с информацией о погоде
+     */
+    @Override
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS) // не нужно запускать транзакцию, если нет - т.к. чтение
+    public List<WeatherCondition> getActualWeatherFromDbForCity(String cityName) {
+        List<WeatherCondition> conditions = actualConditionRepository.findWeatherConditionsByCity(cityName);
+        if (!conditions.isEmpty()) {
+            return conditions;
+        } else throw new WeatherException("No weather info for city " + cityName + " in DB");
+    }
+
+    /**
+     * Метод получает список с прогнозами погоды в городе, сделанными в разное время.
+     *
+     * @param cityName имя города
+     * @return список с прогнозами
+     */
+    @Override
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+    public List<WeatherForecast> getForecastFromDbForCity(String cityName) {
+        List<WeatherForecast> forecasts = forecastRepository.getWeatherForecastsByCity(cityName);
+        if (!forecasts.isEmpty()) {
+            return forecasts;
+        } else throw new WeatherException("No weather forecast for city " + cityName + " in DB");
     }
 
     /**
