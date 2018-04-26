@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
+import javax.jms.Destination;
+
 @Component
 public class WeatherJmsProducer {
 
@@ -15,20 +18,26 @@ public class WeatherJmsProducer {
 
     private JmsTemplate jmsTemplate;
 
+    @Resource(lookup = "forecastweather")
+    private Destination forecastDestination;
+
+    @Resource(lookup = "actualweather")
+    private Destination actualDestination;
+
     @Autowired
     public WeatherJmsProducer(JmsTemplate jmsTemplate) {
         this.jmsTemplate = jmsTemplate;
     }
 
-    public void sendActualWeather(final String topicName, final WeatherCondition condition) {
+    public void sendActualWeather(final WeatherCondition condition) {
         log.info("sending actual weather in JMS...");
-        jmsTemplate.convertAndSend(topicName, condition);
+        jmsTemplate.convertAndSend(actualDestination, condition);
         log.info("actual weather was send");
     }
 
-    public void sendWeatherForecast(final String topicName, final WeatherForecast forecast) {
+    public void sendWeatherForecast(final WeatherForecast forecast) {
         log.info("sending forecast weather in JMS...");
-        jmsTemplate.convertAndSend(topicName, forecast);
+        jmsTemplate.convertAndSend(forecastDestination, forecast);
         log.info("forecast was send");
     }
 }

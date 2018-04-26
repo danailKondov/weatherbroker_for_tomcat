@@ -6,17 +6,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.jms.annotation.EnableJms;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 
 @SpringBootApplication
-@EnableJms
-@EnableWebMvc
-@ComponentScan("com.bellintegrator.weatherbrokertomcat")
 public class WeatherbrokerTomcatApplication extends SpringBootServletInitializer {
 
 	public static void main(String[] args) {
