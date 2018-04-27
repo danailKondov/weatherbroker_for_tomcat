@@ -49,7 +49,6 @@ public class CityController {
     @GetMapping(value = "/actual/{cityName}")
     public ResponseEntity<List<WeatherCondition>> getActualWeather(@PathVariable String cityName) {
         log.info("Request for actual weather from DB for city: " + cityName);
-//        WeatherCondition condition = service.getActualWeatherFromDbForCity(cityName);
         List<WeatherCondition> conditions = service.getActualWeatherFromDbForCity(cityName);
         log.info("Got actual weather: " + conditions);
         return new ResponseEntity<>(conditions, HttpStatus.FOUND);
@@ -64,7 +63,6 @@ public class CityController {
     @GetMapping(value = "/forecast/{cityName}")
     public ResponseEntity<List<WeatherForecast>> getWeatherForecast(@PathVariable String cityName) {
         log.info("Request for weather forecast from DB for city: " + cityName);
-//        WeatherForecast forecast = service.getForecastFromDbForCity(cityName);
         List<WeatherForecast> forecasts = service.getForecastFromDbForCity(cityName);
         log.info("Got forecast: " + forecasts);
         return new ResponseEntity<>(forecasts, HttpStatus.FOUND);

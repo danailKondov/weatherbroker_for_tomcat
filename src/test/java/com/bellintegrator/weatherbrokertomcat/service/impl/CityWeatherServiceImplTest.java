@@ -2,24 +2,27 @@ package com.bellintegrator.weatherbrokertomcat.service.impl;
 
 import com.bellintegrator.weatherbrokertomcat.dao.WeatherConditionRepository;
 import com.bellintegrator.weatherbrokertomcat.dao.WeatherForecastRepository;
+import com.bellintegrator.weatherbrokertomcat.exceptionhandler.exceptions.WeatherException;
 import com.bellintegrator.weatherbrokertomcat.jms.WeatherJmsProducer;
 import com.bellintegrator.weatherbrokertomcat.model.WeatherCondition;
+import com.bellintegrator.weatherbrokertomcat.model.WeatherForecast;
 import com.bellintegrator.weatherbrokertomcat.views.actual.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
 public class CityWeatherServiceImplTest {
 
     @Mock
@@ -41,8 +44,8 @@ public class CityWeatherServiceImplTest {
     public void getWeatherForCityWhenSuccessfulTest() {
 
         WeatherActualView view = getView();
-        ResponseEntity<WeatherActualView> result = new ResponseEntity<>(view, HttpStatus.FOUND);
-        when(restTemplate.getForEntity(anyString(), any(), anyMap())).thenReturn(result); // TODO: any() not working
+        ResponseEntity result = new ResponseEntity<>(view, HttpStatus.FOUND);
+        when(restTemplate.getForEntity(anyString(), any(), anyMap())).thenReturn(result);
 
 
         weatherService.getWeatherForCity("Moscow", "celsius", "current");
@@ -68,6 +71,60 @@ public class CityWeatherServiceImplTest {
         WeatherActualView view = new WeatherActualView();
         view.setQuery(query);
         return view;
+    }
+
+    @Test(expected = WeatherException.class)
+    public void getWeatherForCityWhenWrongTypeInfoTest() {
+        weatherService.getWeatherForCity("Moscow", "celsius", "wrongType");
+    }
+
+    @Test(expected = WeatherException.class)
+    public void getWeatherForCityWhenWrongCityNameTest() {
+        WeatherActualView view = new WeatherActualView();
+        Query query = new Query();
+        view.setQuery(query);
+        ResponseEntity result = new ResponseEntity<>(view, HttpStatus.FOUND);
+        when(restTemplate.getForEntity(anyString(), any(), anyMap())).thenReturn(result);
+
+        weatherService.getWeatherForCity("noSuchCity", "celsius", "current");
+    }
+
+    @Test
+    public void getActualWeatherFromDBbyNameWhenSuccessfulTest() {
+        List<WeatherCondition> list = new ArrayList<>();
+        list.add(new WeatherCondition());
+        when(actualConditionRepository.findWeatherConditionsByCity("moscow")).thenReturn(list);
+
+        List<WeatherCondition> result = weatherService.getActualWeatherFromDbForCity("moscow");
+
+        assertEquals(list, result);
+    }
+
+    @Test(expected = WeatherException.class)
+    public void getActualWeatherFromDBbyNameWhenNoCityTest() {
+        List<WeatherCondition> list = new ArrayList<>();
+        when(actualConditionRepository.findWeatherConditionsByCity("no city in DB")).thenReturn(list);
+
+        weatherService.getActualWeatherFromDbForCity("no city in DB");
+    }
+
+    @Test
+    public void getWeatherForecastFromDBbyNameWhenSuccessfulTest() {
+        List<WeatherForecast> list = new ArrayList<>();
+        list.add(new WeatherForecast());
+        when(forecastRepository.getWeatherForecastsByCity("moscow")).thenReturn(list);
+
+        List<WeatherForecast> result = weatherService.getForecastFromDbForCity("moscow");
+
+        assertEquals(list, result);
+    }
+
+    @Test(expected = WeatherException.class)
+    public void getWeatherForecastFromDBbyNameWhenNoCityTest() {
+        List<WeatherForecast> list = new ArrayList<>();
+        when(forecastRepository.getWeatherForecastsByCity("moscow")).thenReturn(list);
+
+        weatherService.getForecastFromDbForCity("moscow");
     }
 
 }
