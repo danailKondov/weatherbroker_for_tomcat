@@ -1,8 +1,10 @@
 package com.bellintegrator.weatherbrokertomcat.controller;
 
+import com.bellintegrator.weatherbrokertomcat.exceptionhandler.exceptions.WeatherException;
 import com.bellintegrator.weatherbrokertomcat.model.WeatherCondition;
 import com.bellintegrator.weatherbrokertomcat.model.WeatherForecast;
 import com.bellintegrator.weatherbrokertomcat.service.CityWeatherService;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -14,17 +16,17 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.hamcrest.Matchers.hasProperty;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.hamcrest.core.Is.is;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(CityController.class)
@@ -44,6 +46,10 @@ public class CityControllerTest {
         list.add(condition);
         when(service.getActualWeatherFromDbForCity("Moscow")).thenReturn(list);
 
+        doThrow(new WeatherException("Wrong city name!"))
+                .when(service)
+                .getWeatherForCity("NoSuchCity", "celsius", "current");
+
         List<WeatherForecast> forecasts = new ArrayList<>();
         WeatherForecast forecast = new WeatherForecast();
         forecast.setCity("Moscow");
@@ -60,6 +66,20 @@ public class CityControllerTest {
                 .param("typeInfo", "current"))
                 .andExpect(status().isOk());
         verify(service).getWeatherForCity("Moscow", "celsius", "current");
+    }
+
+    @Test
+    public void getActualWeatherWhenNoSuchCityTest() throws Exception {
+        mvc.perform(MockMvcRequestBuilders
+                .get("/cityname")
+                .param("cityName", "NoSuchCity")
+                .param("degreeParam", "celsius")
+                .param("typeInfo", "current"))
+                .andExpect(content().contentType("text/html;charset=UTF-8"))
+                .andExpect(model().attribute("exception", hasProperty("message", is("Wrong city name!"))))
+                .andExpect(view().name("/index.html"))
+                .andExpect(content().string(Matchers.containsString("Wrong city name!")))
+                .andDo(print());
     }
 
     @Test
