@@ -11,6 +11,7 @@ import org.springframework.web.client.RestTemplate;
 
 
 @SpringBootApplication
+//@EnableEurekaClient
 public class WeatherbrokerTomcatApplication extends SpringBootServletInitializer {
 
 	public static void main(String[] args) {
@@ -26,10 +27,11 @@ public class WeatherbrokerTomcatApplication extends SpringBootServletInitializer
 	RestTemplate restTemplate() {
 		RestTemplate restTemplate = new RestTemplate();
 		MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-//		SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
+//		SimpleDateFormat df = new SimpleDateFormat("dd MM yyyy");
 		ObjectMapper mapper = new ObjectMapper();
 //		mapper.setDateFormat(df);
 		converter.setObjectMapper(mapper);
+//		restTemplate.getMessageConverters().clear(); // без этого будут работать конвертеры по умолчанию и да
 		restTemplate.getMessageConverters().add(converter);
 		return restTemplate;
 	}
