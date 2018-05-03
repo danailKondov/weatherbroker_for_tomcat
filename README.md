@@ -25,3 +25,5 @@
 Для запуска приложения необходимо скачать и установить [JMS-брокер](http://activemq.apache.org/activemq-5153-release.html). 
 Установки по умолчанию (логин и пароль "admin") менять не надо.
 Запуск брокера можно осуществить из коммандной строки: _bin\activemq_ _start_ или через activemq.bat в папке apache-activemq-5.11.1\bin\win64.
+
+Для подключения регистрации в Spring Cloud Eureka необходимо [скачать](https://github.com/danailKondov/eurekaserver_for_weatherbroker) и запустить сервер по адресу: http://localhost:8761/
