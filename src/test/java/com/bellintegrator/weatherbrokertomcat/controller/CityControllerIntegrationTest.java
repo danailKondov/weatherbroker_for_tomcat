@@ -65,7 +65,7 @@ public class CityControllerIntegrationTest {
 
         assertTrue(Lists.newArrayList(conditionRepository.findAll()).isEmpty()); // проверяем, что БД пустая
 
-        restTemplate.exchange("/cityname?cityName=Moscow&degreeParam=celsius&typeInfo=current", HttpMethod.GET, entity, String.class);
+        restTemplate.exchange("/get/cityname?cityName=Moscow&degreeParam=celsius&typeInfo=current", HttpMethod.GET, entity, String.class);
 
         Thread.sleep(6000); // ждем, пока делается запрос, пересылается сообщение и сохраняется в БД
 
@@ -81,7 +81,7 @@ public class CityControllerIntegrationTest {
 
         assertTrue(Lists.newArrayList(forecastRepository.findAll()).isEmpty());
 
-        restTemplate.exchange("/cityname?cityName=Moscow&degreeParam=celsius&typeInfo=forecast", HttpMethod.GET, entity, String.class);
+        restTemplate.exchange("/get/cityname?cityName=Moscow&degreeParam=celsius&typeInfo=forecast", HttpMethod.GET, entity, String.class);
 
         Thread.sleep(6000);
 
@@ -99,7 +99,7 @@ public class CityControllerIntegrationTest {
         conditionRepository.save(condition);
         long id = conditionRepository.findWeatherConditionsByCity("Moscow").get(0).getId();
 
-        ResponseEntity<String> response = restTemplate.exchange("/actual/Moscow", HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange("/get/actual/Moscow", HttpMethod.GET, entity, String.class);
 
         String expected = "[{\"id\":" + id + "," +
                 "\"city\":\"Moscow\"," +
@@ -119,7 +119,7 @@ public class CityControllerIntegrationTest {
         forecastRepository.save(forecast);
         long id = forecastRepository.getWeatherForecastsByCity(forecast.getCity()).get(0).getId();
 
-        ResponseEntity<String> response = restTemplate.exchange("/forecast/Moscow", HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange("/get/forecast/Moscow", HttpMethod.GET, entity, String.class);
 
         String expected = "[{\"id\":" + id + "," +
                 "\"date\":null," +

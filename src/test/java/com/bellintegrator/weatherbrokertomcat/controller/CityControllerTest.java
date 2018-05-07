@@ -60,7 +60,7 @@ public class CityControllerTest {
     @Test
     public void getWeatherForCityTest() throws Exception {
         mvc.perform(MockMvcRequestBuilders
-                .get("/cityname")
+                .get("/get/cityname")
                 .param("cityName", "Moscow")
                 .param("degreeParam", "celsius")
                 .param("typeInfo", "current"))
@@ -71,7 +71,7 @@ public class CityControllerTest {
     @Test
     public void getActualWeatherWhenNoSuchCityTest() throws Exception {
         mvc.perform(MockMvcRequestBuilders
-                .get("/cityname")
+                .get("/get/cityname")
                 .param("cityName", "NoSuchCity")
                 .param("degreeParam", "celsius")
                 .param("typeInfo", "current"))
@@ -85,7 +85,7 @@ public class CityControllerTest {
     @Test
     public void getActualWeatherTest() throws Exception {
         mvc.perform(MockMvcRequestBuilders
-                .get("/actual/{cityName}", "Moscow")
+                .get("/get/actual/{cityName}", "Moscow")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isFound())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
@@ -96,7 +96,7 @@ public class CityControllerTest {
     @Test
     public void getWeatherForecastTest() throws Exception {
         mvc.perform(MockMvcRequestBuilders
-                .get("/forecast/{cityName}", "Moscow")
+                .get("/get/forecast/{cityName}", "Moscow")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$[0].city", is("Moscow")))
